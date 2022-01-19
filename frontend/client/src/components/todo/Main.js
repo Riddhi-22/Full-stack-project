@@ -8,8 +8,24 @@ function Todo() {
     setTodoValue(e.target.value);
   };
 
+  const onCheckHandler = (index) => {
+    let newTodoList = [...todoList];
+    newTodoList[index][1] = !newTodoList[index][1];
+    const trueList = [];
+    const falseList = [];
+    for (let i = 0; i < newTodoList.length; i++) {
+      if (newTodoList[i][1] == 1) {
+        trueList.push(newTodoList[i]);
+      } else if (newTodoList[i][1] == 0) {
+        falseList.push(newTodoList[i]);
+      }
+    }
+    newTodoList = [...trueList, ["", -1], ... falseList];
+    setTodoList(newTodoList);
+  };
+
   const onClickHandler = (e) => {
-    setTodoList([...todoList, todoValue]);
+    setTodoList([[todoValue, true], ...todoList]);
     setTodoValue("");
   };
 
@@ -26,10 +42,10 @@ function Todo() {
             }}
           >
             <h3>My To do List</h3>
-            <div class="input-group mb-3">
+            <div className="input-group mb-3">
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 value={todoValue}
                 onChange={onChangeHandler}
                 placeholder="My new task"
@@ -37,16 +53,52 @@ function Todo() {
                 aria-describedby="button-addon2"
               />
               <button
-                class="btn btn-success"
+                className="btn btn-success"
                 onClick={onClickHandler}
                 type="button"
                 id="button-addon2"
               >
-                Add <i class="fa-solid fa-plus"></i>
+                Add <i className="fa-solid fa-plus"></i>
               </button>
             </div>
-            {todoList.map((element) => {
-              return (<div><input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" /><label style={{display: "inline", width: "60px"}}>{element}</label></div>)
+            {todoList.map((element, index) => {
+              return (
+                <div>
+                {element[1] == -1 ? <div style={{width: "100%", height: "2px", "backgroundColor": "#333", marginBottom: "10px"}} /> 
+                :<div className="input-group mb-3" key={index} >
+                  <div className="input-group-text">
+                    <input
+                      className="form-check-input mt-0"
+                      onChange={(e) => {
+                        onCheckHandler(index);
+                      }}
+                      type="checkbox"
+                      value=""
+                      checked={!element[1]}
+                      aria-label="Checkbox for following text input"
+                    />
+                  </div>
+                  {element[1] ? (
+                    <input
+                      type="text"
+                      readOnly={true}
+                      value={element[0]}
+                      className="form-control"
+                      aria-label="Text input with checkbox"
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      readOnly={true}
+                      style={{ textDecoration: "line-through", color: "#999" }}
+                      value={element[0]}
+                      className="form-control"
+                      aria-label="Text input with checkbox"
+                    />
+                  )}
+                </div>}
+                </div>
+              );
             })}
           </div>
         </center>
